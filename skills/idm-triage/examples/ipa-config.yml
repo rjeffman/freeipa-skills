@@ -1,0 +1,144 @@
+# Example project configuration. Install as assets/config.yaml or pass with -c.
+---
+mcp:
+  transport: http
+  url: http://localhost:8080/mcp
+
+providers:
+  jira:
+    assigned_team: rhel-idm-ipa
+    projects:
+      - RHEL
+    connection: mcp
+    url: https://redhat.atlassian.net
+    custom_fields:
+      cve_id: customfield_10667
+      cvss_score: customfield_10859
+      stale_date: customfield_10812
+      sla_date: customfield_11000
+
+  bugzilla:
+    connection: mcp
+    url: https://bugzilla.redhat.com
+    # product: Fedora
+    fields:
+      show: [component]
+      hide: [comments]
+
+  github:
+    connection: github_api
+    url: https://api.github.com
+
+  codeberg:
+    connection: http
+    url: https://codeberg.org
+
+groups:
+  triage:
+    status: New
+    state: open
+    is: issue
+    exclude_labels:
+      - "test-failure"
+    lookback_days: 14
+    show:
+      - comments
+  autoclose:
+    labels:
+      - "auto-close-warning"
+    lookback_days: 0
+    lookahead_days: 30
+  test_failures:
+    labels:
+      - "test-failure"
+  needs_review:
+    labels:
+      - "needs-review"
+
+components:
+  - name: FreeIPA
+    sources:
+      - provider: jira
+        groups:
+          - triage:
+              issue_types: [Bug, Story, Vulnerability]
+          - autoclose:
+          - vulnerabilities:
+      - provider: codeberg
+        repository: freeipa/freeipa
+        groups:
+          - triage:
+              # labels:
+              #   - triage
+              lookback_days: 7
+          - test_failures:
+              lookback_days: 21
+      - provider: github
+        repository: freeipa/freeipa
+        groups:
+          - needs_review:
+              labels: [needs-review]
+  - name: WebUI
+    sources:
+      - provider: github
+        repository: freeipa/freeipa-webui
+        groups:
+          - triage:
+              hide: [author, status]
+          - needs_review:
+              is: pr
+              labels: [needs review]
+  - name: Fedora
+    sources:
+      - provider: bugzilla
+        components:
+          - freeipa
+          - python-jwcrypto
+          - python-h2
+          - python-hpack
+          - python-dns
+        groups:
+          - triage:
+              status: NEW
+              show: [Assignee, Keywords]
+              exclude_keywords: [Security, Triaged]
+          - vulnerabilities:
+              status: NEW
+              show: [Assignee]
+              keywords: [Security, SecurityTracking]
+
+report:
+  title: "@today"
+  groups: [triage, vulnerabilities, test_failures, needs_review, autoclose]
+  group_titles:
+    vulnerabilities: CVEs
+    autoclose: "Autoclose (Jira)"
+  group_defaults:
+    triage:
+      fields:
+        hide:
+          - assignee
+          - status
+        exclude_labels: [triage]
+    test_failures:
+      fields:
+        hide:
+          - assignee
+          - status
+        exclude_labels: [tests, test_failures]
+    vulnerabilities:
+      fields:
+        hide:
+          - assignee
+          - status
+        show:
+          - cve_id
+          - cvss_score
+          - duedate
+          - sla_date
+    autoclose:
+      fields:
+        show: []
+  skip_commenters:
+    - Tracker AutoManager
+    - RHEL Jira Bot

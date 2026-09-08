@@ -18,4 +18,27 @@ modules:
       - Pull Request
       - Azure
       - Log Analysis
+
+  - name: "IDM triage"
+    description: >-
+      Generates configuration-driven triage reports from Jira, GitHub, Codeberg,
+      and Forgejo sources.
+    version: "1.0.0"
+    repository: "https://github.com/rjeffman/freeipa-skills"
+    tags:
+      - FreeIPA
+      - Triage
+      - Jira
+      - GitHub
+
+  - name: "IDM triage configuration"
+    description: >-
+      Guides the creation of configuration files for IDM triage skill"
+    version: "1.0.0"
+    repository: "https://github.com/rjeffman/freeipa-skills"
+    tags:
+      - FreeIPA
+      - Triage
+      - Jira
+      - GitHub
 ...

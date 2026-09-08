@@ -1,0 +1,7 @@
+# configuration files
+/assets/*config.yaml
+/assets/user_map_cache.yaml
+
+# output files
+*triage.md
+
