@@ -3,6 +3,11 @@
 
 .mcp.json
 
+**/__pycache__/
+
+*.swp
+.DS_Store
+
 # Agent specific configuration
 /.agents/
 /.cursor/
