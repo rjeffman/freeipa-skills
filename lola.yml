@@ -18,4 +18,15 @@ modules:
       - Pull Request
       - Azure
       - Log Analysis
-...
+    - name: "WebUI Environment Deployment"
+    description: "Deploys the modern WebUI local environment"
+    version: "1.0.0"
+    repository: "https://github.com/freeipa/freeipa-webui"
+    tags:
+      - FreeIPA
+      - WebUI
+      - Deployment
+      - Local Environment
+      - Podman
+      - Docker
+  ...
